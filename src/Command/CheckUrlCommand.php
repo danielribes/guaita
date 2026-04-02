@@ -34,7 +34,7 @@ final class CheckUrlCommand extends Command
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         $console = new SymfonyStyle($input, $output);
-        $url = new Url($input->getArgument('url'));
+        $url = new Url((string) $input->getArgument('url'));
 
         try {
             $newSnapshot = $this->contentFetcher->fetch($url);

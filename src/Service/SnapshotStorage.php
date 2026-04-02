@@ -22,15 +22,26 @@ final class SnapshotStorage
             return null;
         }
 
-        $storedHashValue = trim(file_get_contents($latestFilePath));
-        $contentHash = ContentHash::fromStoredValue($storedHashValue);
+        $rawHash = file_get_contents($latestFilePath);
+
+        if ($rawHash === false) {
+            return null;
+        }
+
+        $contentHash = ContentHash::fromStoredValue(trim($rawHash));
         $contentFilePath = $this->contentFilePath($url, $contentHash);
 
         if (!file_exists($contentFilePath)) {
             return null;
         }
 
-        return new Snapshot(file_get_contents($contentFilePath), $contentHash);
+        $rawContent = file_get_contents($contentFilePath);
+
+        if ($rawContent === false) {
+            return null;
+        }
+
+        return new Snapshot($rawContent, $contentHash);
     }
 
     public function store(Url $url, Snapshot $snapshot): void

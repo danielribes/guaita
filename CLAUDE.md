@@ -120,23 +120,23 @@ Follow **PSR-12** and Symfony coding standards.
 
 ## Object Calisthenics
 
-Apply these principles in all code:
+Apply Object Calisthenics principles where they improve code quality and readability, not dogmatically.
 
 1. **One level of indentation per method** — extract methods if you need to nest deeper
-2. **Never use the `else` keyword** — use early returns instead
-3. **Wrap all primitives and strings** — encapsulate domain values in value objects
+2. **Prefer early returns over else when it improves readability**
+3. **Wrap primitives in value objects when they represent meaningful domain concepts**
 4. **First-class collections** — wrap arrays in dedicated collection classes
-5. **One dot (method call) per line** — do not chain beyond one call per line
+5. **Avoid deep chaining** — prefer readability over strict limits
 6. **No abbreviations** — use full, descriptive names (`$httpClient`, not `$client`; `$selector`, not `$sel`)
-7. **Keep all entities small** — classes under 50 lines, methods under 10 lines
-8. **No more than two instance variables per class** — inject dependencies, do not accumulate state
-9. **No getters/setters or public properties** — expose behaviour, not data
+7. **Keep all entities small** — Keep classes and methods small and focused.
+8. **Keep the number of dependencies low and focused** — (ideally ≤4) 
+9. **Avoid unnecessary getters/setters** — Prefer behaviour over data exposure.
 
 ---
 
 ## Early Returns
 
-Always handle edge cases first and return early. Never use `else` after a `return`.
+Always handle edge cases first and return early. Prefer early returns over else when it improves readability
 
 ```php
 // Correct
@@ -172,7 +172,7 @@ public function process(?string $url): Response
 
 ## Symfony Conventions
 
-- Use **Attributes** for routing, validation, and service configuration — never YAML or XML for these
+- Prefer **Attributes** for routing, validation, and service configuration in application code
 - Use **constructor injection** — never use the service locator pattern
 - Use **Symfony Console** for all CLI commands
 - Use **Symfony HttpClient** for HTTP requests
@@ -230,9 +230,8 @@ tests/
 
 ## What to avoid
 
-- No `else` keyword — ever
 - No untyped properties or parameters
-- No `array` as a return type when a specific type or collection class is possible
+- Avoid returning raw arrays when a dedicated type or collection would improve clarity
 - No inline HTML in controllers — always use Twig templates
 - No hardcoded strings for domain values — use enums
 - No abbreviations in names
