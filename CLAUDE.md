@@ -12,6 +12,9 @@ Claude Code must follow these rules in every file it generates or modifies.
 - **PHP 8.4+** (required)
 - **Symfony 8.0+** (required)
 - Use Symfony components whenever one is available before reaching for a third-party library.
+- Use **Composer** for dependency management and autoloading (PSR-4)
+- All classes must use proper namespaces matching the directory structure
+- Never use `require` or `include` for project classes — rely on autoloading
 
 ---
 
