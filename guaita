@@ -1,0 +1,20 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . '/vendor/autoload.php';
+
+use App\Command\CheckUrlCommand;
+use App\Service\ContentFetcher;
+use App\Service\SnapshotStorage;
+use Symfony\Component\Console\Application;
+use Symfony\Component\HttpClient\HttpClient;
+
+$contentFetcher = new ContentFetcher(HttpClient::create());
+$snapshotStorage = new SnapshotStorage(__DIR__ . '/storage');
+
+$application = new Application('guaita', '1.0.0');
+$application->addCommand(new CheckUrlCommand($contentFetcher, $snapshotStorage));
+$application->setDefaultCommand('guaita:check');
+$application->run();
