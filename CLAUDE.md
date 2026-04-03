@@ -5,6 +5,10 @@
 This file defines the coding standards and conventions for this project.
 Claude Code must follow these rules in every file it generates or modifies.
 
+## Rule Priority
+
+If a rule in this document conflicts with an external library example or framework convention, this document's rule takes precedence. These rules apply to the code we write, not to the internals of third-party libraries.
+
 ---
 
 ## Stack
@@ -100,6 +104,19 @@ $message = match($status) {
 $this->render('monitor/show.html.twig', context: ['monitor' => $monitor]);
 ```
 
+### Never use DateTime — always use DateTimeImmutable
+
+`DateTime` is mutable and can be modified unexpectedly when passed by reference.
+`DateTimeImmutable` always returns a new instance on every operation.
+
+```php
+// Correct
+$createdAt = new DateTimeImmutable('2026-01-01');
+
+// Wrong
+$createdAt = new DateTime('2026-01-01');
+```
+
 ### Use arrow functions for short callbacks
 ```php
 $urls = array_map(fn(Monitor $m) => $m->url, $monitors);
@@ -181,17 +198,28 @@ public function process(?string $url): Response
 
 ```php
 #[AsCommand(name: 'guaita:check', description: 'Check a monitored URL for changes')]
-class CheckUrlCommand
+final class CheckUrlCommand extends Command
 {
     public function __construct(
-        private readonly MonitorService $monitorService,
-    ) {}
+        private readonly ContentFetcherInterface $contentFetcher,
+        private readonly SnapshotStorage $snapshotStorage,
+    ) {
+        parent::__construct();
+    }
 
-    public function __invoke(
-        #[InputArgument] string $url,
-        #[InputOption] ?string $selector = null,
-    ): void {
+    protected function configure(): void
+    {
+        $this->addArgument('url', InputArgument::REQUIRED, 'The URL to check');
+    }
+
+    protected function execute(InputInterface $input, OutputInterface $output): int
+    {
+        $console = new SymfonyStyle($input, $output);
+        $url = new Url((string) $input->getArgument('url'));
+
         // ...
+
+        return Command::SUCCESS;
     }
 }
 ```
